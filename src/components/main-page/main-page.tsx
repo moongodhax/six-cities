@@ -1,4 +1,6 @@
-import { offers } from '../../mocks/offers';
+import { useState } from 'react';
+import { Offer, offers } from '../../mocks/offers';
+import Map from '../map/map';
 import OffersList from '../offers-list/offers-list';
 
 type MainPageProps = {
@@ -6,6 +8,9 @@ type MainPageProps = {
 };
 
 function MainPage({ placesCount }: MainPageProps): JSX.Element {
+  const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
+  const city = offers[0].city; // Используем город из первого предложения
+
   return (
     <div className="page page--gray page--main">
       <header className="header">
@@ -119,11 +124,19 @@ function MainPage({ placesCount }: MainPageProps): JSX.Element {
                 </ul>
               </form>
               <div className="cities__places-list places__list tabs__content">
-                <OffersList offers={offers} />
+                <OffersList
+                  offers={offers}
+                  onOfferHover={setSelectedOffer}
+                />
               </div>
             </section>
             <div className="cities__right-section">
-              <section className="cities__map map"></section>
+              <Map
+                city={city}
+                offers={offers}
+                selectedOffer={selectedOffer}
+                className="cities__map"
+              />
             </div>
           </div>
         </div>

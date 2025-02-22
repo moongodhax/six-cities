@@ -1,4 +1,5 @@
-import PlaceCard from '../place-card/place-card';
+import { offers } from '../../mocks/offers';
+import OffersList from '../offers-list/offers-list';
 
 type MainPageProps = {
 	placesCount: number;
@@ -118,9 +119,7 @@ function MainPage({ placesCount }: MainPageProps): JSX.Element {
                 </ul>
               </form>
               <div className="cities__places-list places__list tabs__content">
-                {Array.from({ length: 5 }, (_, i) => (
-                  <PlaceCard key={i} />
-                ))}
+                <OffersList offers={offers} />
               </div>
             </section>
             <div className="cities__right-section">

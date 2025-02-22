@@ -1,4 +1,9 @@
+import { offers } from '../../mocks/offers';
+import OffersList from '../offers-list/offers-list';
+
 function FavoritesPage(): JSX.Element {
+  const favoriteOffers = offers.filter((offer) => offer.isFavorite);
+
   return (
     <div className="page">
       <header className="header">{/* ... header content ... */}</header>
@@ -7,9 +12,7 @@ function FavoritesPage(): JSX.Element {
         <div className="page__favorites-container container">
           <section className="favorites">
             <h1 className="favorites__title">Saved listing</h1>
-            <ul className="favorites__list">
-              {/* ... favorites content ... */}
-            </ul>
+            <OffersList offers={favoriteOffers} className="favorites__list" />
           </section>
         </div>
       </main>

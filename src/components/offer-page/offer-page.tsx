@@ -1,14 +1,24 @@
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { offers } from '../../mocks/offers';
+import { Offer, offers } from '../../mocks/offers';
+import { reviews } from '../../mocks/reviews';
+import Map from '../map/map';
+import OffersList from '../offers-list/offers-list';
 import ReviewForm from '../review-form/review-form';
+import ReviewsList from '../reviews-list/reviews-list';
 
 function OfferPage(): JSX.Element {
   const { id } = useParams();
   const offer = offers.find((o) => o.id === id);
+  const [selectedOffer, setSelectedOffer] = useState<Offer | null>(offer || null);
 
   if (!offer) {
     return <div>Offer not found</div>;
   }
+
+  const nearbyOffers = offers
+    .filter((o) => o.id !== id)
+    .slice(0, 3);
 
   return (
     <div className="page">
@@ -35,7 +45,7 @@ function OfferPage(): JSX.Element {
                   >
                     <div className="header__avatar-wrapper user__avatar-wrapper"></div>
                     <span className="header__user-name user__name">
-											Oliver.conner@gmail.com
+                      Oliver.conner@gmail.com
                     </span>
                     <span className="header__favorite-count">3</span>
                   </Link>
@@ -104,7 +114,7 @@ function OfferPage(): JSX.Element {
                   {offer.bedrooms} Bedrooms
                 </li>
                 <li className="offer__feature offer__feature--adults">
-									Max {offer.maxAdults} adults
+                  Max {offer.maxAdults} adults
                 </li>
               </ul>
               <div className="offer__price">
@@ -146,65 +156,31 @@ function OfferPage(): JSX.Element {
                   <p className="offer__text">{offer.description}</p>
                 </div>
               </div>
-              <section className="offer__reviews reviews">
-                <h2 className="reviews__title">
-									Reviews · <span className="reviews__amount">1</span>
-                </h2>
-                <ReviewForm />
-              </section>
+              <ReviewsList reviews={reviews} />
+              <ReviewForm />
             </div>
           </div>
+
+          <div style={{ marginTop: '50px' }}>
+            <Map
+              city={offer.city}
+              offers={[offer, ...nearbyOffers]}
+              selectedOffer={selectedOffer}
+              className="offer__map"
+            />
+          </div>
         </section>
+
         <div className="container">
           <section className="near-places places">
             <h2 className="near-places__title">
-							Other places in the neighbourhood
+              Other places in the neighbourhood
             </h2>
-            <div className="near-places__list places__list">
-              {offers
-                .filter((o) => o.id !== id)
-                .slice(0, 3)
-                .map((nearOffer) => (
-                  <article
-                    className="near-places__card place-card"
-                    key={nearOffer.id}
-                  >
-                    {/* Similar card structure as PlaceCard component */}
-                    <div className="near-places__image-wrapper place-card__image-wrapper">
-                      <img
-                        className="place-card__image"
-                        src={nearOffer.previewImage}
-                        width="260"
-                        height="200"
-                        alt={nearOffer.title}
-                      />
-                    </div>
-                    <div className="place-card__info">
-                      <div className="place-card__price-wrapper">
-                        <div className="place-card__price">
-                          <b className="place-card__price-value">
-														&euro;{nearOffer.price}
-                          </b>
-                          <span className="place-card__price-text">
-														&#47;&nbsp;night
-                          </span>
-                        </div>
-                      </div>
-                      <div className="place-card__rating rating">
-                        <div className="place-card__stars rating__stars">
-                          <span
-                            style={{ width: `${nearOffer.rating * 20}%` }}
-                          >
-                          </span>
-                          <span className="visually-hidden">Rating</span>
-                        </div>
-                      </div>
-                      <h2 className="place-card__name">{nearOffer.title}</h2>
-                      <p className="place-card__type">{nearOffer.type}</p>
-                    </div>
-                  </article>
-                ))}
-            </div>
+            <OffersList
+              offers={nearbyOffers}
+              onOfferHover={setSelectedOffer}
+              className="near-places__list"
+            />
           </section>
         </div>
       </main>

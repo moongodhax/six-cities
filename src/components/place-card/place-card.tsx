@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom';
 import { Offer } from '../../mocks/offers';
 
 type PlaceCardProps = {
-	offer: Offer;
-	onMouseEnter?: () => void;
-	onMouseLeave?: () => void;
+  offer: Offer;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 };
 
 function PlaceCard({

@@ -7,7 +7,7 @@ import OfferPage from '../offer-page/offer-page';
 import PrivateRoute from '../private-route/private-route';
 
 type AppProps = {
-	placesCount: number;
+  placesCount: number;
 };
 
 function App({ placesCount }: AppProps): JSX.Element {

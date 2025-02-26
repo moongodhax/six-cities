@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AxiosInstance } from 'axios';
-import { DEFAULT_CITY, SortType } from '../../const';
+import { APIRoute, DEFAULT_CITY, SortType } from '../../const';
 import { Offer } from '../../types/offer';
+import { Review, ReviewData } from '../../types/review';
 import { City } from '../../types/state';
 
 export const fetchOffer = createAsyncThunk<
@@ -22,6 +23,27 @@ export const fetchNearbyOffers = createAsyncThunk<
   return data;
 });
 
+export const fetchReviews = createAsyncThunk<
+  Review[],
+  string,
+  { extra: AxiosInstance }
+>('data/fetchReviews', async (id, { extra: api }) => {
+  const { data } = await api.get<Review[]>(`${APIRoute.Comments}/${id}`);
+  return data;
+});
+
+export const postReview = createAsyncThunk<
+  Review[],
+  ReviewData,
+  { extra: AxiosInstance }
+>('data/postReview', async ({ offerId, comment, rating }, { extra: api }) => {
+  const { data } = await api.post<Review[]>(`${APIRoute.Comments}/${offerId}`, {
+    comment,
+    rating
+  });
+  return data;
+});
+
 type OffersData = {
   city: City;
   offers: Offer[];
@@ -31,6 +53,9 @@ type OffersData = {
   isOffersLoading: boolean;
   isOfferLoading: boolean;
   hasError: boolean;
+  reviews: Review[];
+  isReviewsLoading: boolean;
+  isReviewPosting: boolean;
 };
 
 const initialState: OffersData = {
@@ -41,7 +66,10 @@ const initialState: OffersData = {
   sortType: SortType.Popular,
   isOffersLoading: false,
   isOfferLoading: false,
-  hasError: false
+  hasError: false,
+  reviews: [],
+  isReviewsLoading: false,
+  isReviewPosting: false
 };
 
 export const fetchOffers = createAsyncThunk<
@@ -92,6 +120,26 @@ export const offersData = createSlice({
       })
       .addCase(fetchNearbyOffers.fulfilled, (state, action) => {
         state.nearbyOffers = action.payload;
+      })
+      .addCase(fetchReviews.pending, (state) => {
+        state.isReviewsLoading = true;
+      })
+      .addCase(fetchReviews.fulfilled, (state, action) => {
+        state.reviews = action.payload;
+        state.isReviewsLoading = false;
+      })
+      .addCase(fetchReviews.rejected, (state) => {
+        state.isReviewsLoading = false;
+      })
+      .addCase(postReview.pending, (state) => {
+        state.isReviewPosting = true;
+      })
+      .addCase(postReview.fulfilled, (state, action) => {
+        state.reviews = action.payload;
+        state.isReviewPosting = false;
+      })
+      .addCase(postReview.rejected, (state) => {
+        state.isReviewPosting = false;
       });
   }
 });

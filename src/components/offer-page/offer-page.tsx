@@ -1,17 +1,20 @@
 import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { AuthorizationStatus } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { reviews } from '../../mocks/reviews';
 import {
   getHasError,
   getIsOfferLoading,
   getNearbyOffers,
-  getOffer
+  getOffer,
+  getReviews
 } from '../../store/offers-data/offers-data.selectors';
 import {
   fetchNearbyOffers,
-  fetchOffer
+  fetchOffer,
+  fetchReviews
 } from '../../store/offers-data/offers-data.slice';
+import { getAuthorizationStatus } from '../../store/user-process/user-process.selectors';
 import Map from '../map/map';
 import OffersList from '../offers-list/offers-list';
 import ReviewForm from '../review-form/review-form';
@@ -21,15 +24,18 @@ import Spinner from '../spinner/spinner';
 function OfferPage(): JSX.Element {
   const { id } = useParams();
   const offer = useAppSelector(getOffer);
+  const reviews = useAppSelector(getReviews);
   const nearbyOffers = useAppSelector(getNearbyOffers);
   const isLoading = useAppSelector(getIsOfferLoading);
   const hasError = useAppSelector(getHasError);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (id) {
       dispatch(fetchOffer(id));
       dispatch(fetchNearbyOffers(id));
+      dispatch(fetchReviews(id));
     }
   }, [id, dispatch]);
 
@@ -179,7 +185,9 @@ function OfferPage(): JSX.Element {
               </div>
               <section className="offer__reviews reviews">
                 <ReviewsList reviews={reviews} />
-                <ReviewForm />
+                {authorizationStatus === AuthorizationStatus.Auth && id && (
+                  <ReviewForm offerId={id} />
+                )}
               </section>
             </div>
           </div>

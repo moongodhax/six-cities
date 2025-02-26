@@ -34,20 +34,22 @@ export type Offer = {
   previewImage: string;
 };
 
+export const AMSTERDAM: City = {
+  name: 'Amsterdam',
+  location: {
+    latitude: 52.37454,
+    longitude: 4.897976,
+    zoom: 13
+  }
+};
+
 export const offers: Offer[] = [
   {
     id: '1',
     title: 'Beautiful & luxurious apartment at great location',
     type: 'apartment',
     price: 120,
-    city: {
-      name: 'Amsterdam',
-      location: {
-        latitude: 52.37454,
-        longitude: 4.897976,
-        zoom: 13
-      }
-    },
+    city: AMSTERDAM,
     location: {
       latitude: 52.3909553943508,
       longitude: 4.85309666406198,
@@ -87,16 +89,9 @@ export const offers: Offer[] = [
     title: 'Wood and stone place',
     type: 'room',
     price: 80,
-    city: {
-      name: 'Amsterdam',
-      location: {
-        latitude: 52.37454,
-        longitude: 4.897976,
-        zoom: 13
-      }
-    },
+    city: AMSTERDAM,
     location: {
-      latitude: 52.369553943508,
+      latitude: 52.3609553943508,
       longitude: 4.85309666406198,
       zoom: 8
     },
@@ -125,14 +120,7 @@ export const offers: Offer[] = [
     title: 'Canal View Prinsengracht',
     type: 'apartment',
     price: 132,
-    city: {
-      name: 'Amsterdam',
-      location: {
-        latitude: 52.37454,
-        longitude: 4.897976,
-        zoom: 13
-      }
-    },
+    city: AMSTERDAM,
     location: {
       latitude: 52.3909553943508,
       longitude: 4.929309666406198,
@@ -170,14 +158,7 @@ export const offers: Offer[] = [
     title: 'Nice, cozy, warm big bed apartment',
     type: 'apartment',
     price: 180,
-    city: {
-      name: 'Amsterdam',
-      location: {
-        latitude: 52.37454,
-        longitude: 4.897976,
-        zoom: 13
-      }
-    },
+    city: AMSTERDAM,
     location: {
       latitude: 52.3809553943508,
       longitude: 4.939309666406198,

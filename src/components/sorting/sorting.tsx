@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { SortType } from '../../const';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { getSort } from '../../store/offers-data/offers-data.selectors';
+import { setSort } from '../../store/offers-data/offers-data.slice';
 
-type SortingProps = {
-  currentSort: SortType;
-  onSortChange: (sortType: SortType) => void;
-};
-
-function Sorting({ currentSort, onSortChange }: SortingProps): JSX.Element {
+function Sorting(): JSX.Element {
   const [isOpened, setIsOpened] = useState(false);
+  const activeSort = useAppSelector(getSort);
+  const dispatch = useAppDispatch();
 
   return (
     <form className="places__sorting" action="#" method="get">
@@ -17,23 +17,29 @@ function Sorting({ currentSort, onSortChange }: SortingProps): JSX.Element {
         tabIndex={0}
         onClick={() => setIsOpened(!isOpened)}
       >
-        {currentSort}
+        {activeSort}
         <svg className="places__sorting-arrow" width="7" height="4">
           <use xlinkHref="#icon-arrow-select"></use>
         </svg>
       </span>
-      <ul className={`places__options places__options--custom ${isOpened ? 'places__options--opened' : ''}`}>
-        {Object.values(SortType).map((sortType) => (
+      <ul
+        className={`places__options places__options--custom ${
+          isOpened ? 'places__options--opened' : ''
+        }`}
+      >
+        {Object.values(SortType).map((type) => (
           <li
-            key={sortType}
-            className={`places__option ${sortType === currentSort ? 'places__option--active' : ''}`}
+            key={type}
+            className={`places__option ${
+              type === activeSort ? 'places__option--active' : ''
+            }`}
             tabIndex={0}
             onClick={() => {
-              onSortChange(sortType);
+              dispatch(setSort(type));
               setIsOpened(false);
             }}
           >
-            {sortType}
+            {type}
           </li>
         ))}
       </ul>

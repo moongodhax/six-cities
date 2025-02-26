@@ -1,37 +1,38 @@
 import { useEffect, useState } from 'react';
-import { SortType } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { offers as mockOffers, Offer } from '../../mocks/offers';
-import { setOffers } from '../../store/user-process/user-process.slice';
+import {
+  getCity,
+  getFilteredOffers,
+  getHasError,
+  getIsOffersLoading
+} from '../../store/offers-data/offers-data.selectors';
+import { fetchOffers } from '../../store/offers-data/offers-data.slice';
+import { Offer } from '../../types/offer';
 import CitiesList from '../cities-list/cities-list';
 import Map from '../map/map';
 import OffersList from '../offers-list/offers-list';
 import Sorting from '../sorting/sorting';
+import Spinner from '../spinner/spinner';
 
 function MainPage(): JSX.Element {
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
-  const [currentSort, setCurrentSort] = useState<SortType>(SortType.Popular);
+  const city = useAppSelector(getCity);
+  const offers = useAppSelector(getFilteredOffers);
+  const isOffersLoading = useAppSelector(getIsOffersLoading);
+  const hasError = useAppSelector(getHasError);
   const dispatch = useAppDispatch();
-  const { city, offers } = useAppSelector((state) => state.USER);
 
   useEffect(() => {
-    dispatch(setOffers(mockOffers));
+    dispatch(fetchOffers());
   }, [dispatch]);
 
-  const filteredOffers = offers.filter((offer: Offer) => offer.city.name === city.name);
+  if (isOffersLoading) {
+    return <Spinner />;
+  }
 
-  const sortedOffers = [...filteredOffers].sort((a, b) => {
-    switch (currentSort) {
-      case SortType.PriceLowToHigh:
-        return a.price - b.price;
-      case SortType.PriceHighToLow:
-        return b.price - a.price;
-      case SortType.TopRated:
-        return b.rating - a.rating;
-      default:
-        return 0;
-    }
-  });
+  if (hasError) {
+    return <div>Error loading offers</div>;
+  }
 
   return (
     <div className="page page--gray page--main">
@@ -84,26 +85,15 @@ function MainPage(): JSX.Element {
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
               <b className="places__found">
-                {sortedOffers.length} places to stay in {city.name}
+                {offers.length} places to stay in {city.name}
               </b>
-              <Sorting
-                currentSort={currentSort}
-                onSortChange={setCurrentSort}
-              />
+              <Sorting />
               <div className="cities__places-list places__list tabs__content">
-                <OffersList
-                  offers={sortedOffers}
-                  onOfferHover={setSelectedOffer}
-                />
+                <OffersList offers={offers} onOfferHover={setSelectedOffer} />
               </div>
             </section>
             <div className="cities__right-section">
-              <Map
-                city={city}
-                offers={sortedOffers}
-                selectedOffer={selectedOffer}
-                className="cities__map"
-              />
+              <Map city={city} offers={offers} selectedOffer={selectedOffer} />
             </div>
           </div>
         </div>

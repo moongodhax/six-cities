@@ -1,24 +1,45 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Offer, offers } from '../../mocks/offers';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import { reviews } from '../../mocks/reviews';
+import {
+  getHasError,
+  getIsOfferLoading,
+  getNearbyOffers,
+  getOffer
+} from '../../store/offers-data/offers-data.selectors';
+import {
+  fetchNearbyOffers,
+  fetchOffer
+} from '../../store/offers-data/offers-data.slice';
 import Map from '../map/map';
 import OffersList from '../offers-list/offers-list';
 import ReviewForm from '../review-form/review-form';
 import ReviewsList from '../reviews-list/reviews-list';
+import Spinner from '../spinner/spinner';
 
 function OfferPage(): JSX.Element {
   const { id } = useParams();
-  const offer = offers.find((o) => o.id === id);
-  const [selectedOffer, setSelectedOffer] = useState<Offer | null>(offer || null);
+  const offer = useAppSelector(getOffer);
+  const nearbyOffers = useAppSelector(getNearbyOffers);
+  const isLoading = useAppSelector(getIsOfferLoading);
+  const hasError = useAppSelector(getHasError);
+  const dispatch = useAppDispatch();
 
-  if (!offer) {
-    return <div>Offer not found</div>;
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchOffer(id));
+      dispatch(fetchNearbyOffers(id));
+    }
+  }, [id, dispatch]);
+
+  if (isLoading) {
+    return <Spinner />;
   }
 
-  const nearbyOffers = offers
-    .filter((o) => o.id !== id)
-    .slice(0, 3);
+  if (hasError || !offer) {
+    return <div>Not found</div>;
+  }
 
   return (
     <div className="page">
@@ -156,31 +177,30 @@ function OfferPage(): JSX.Element {
                   <p className="offer__text">{offer.description}</p>
                 </div>
               </div>
-              <ReviewsList reviews={reviews} />
-              <ReviewForm />
+              <section className="offer__reviews reviews">
+                <ReviewsList reviews={reviews} />
+                <ReviewForm />
+              </section>
             </div>
           </div>
-
-          <div style={{ marginTop: '50px' }}>
-            <Map
-              city={offer.city}
-              offers={[offer, ...nearbyOffers]}
-              selectedOffer={selectedOffer}
-              className="offer__map"
-            />
-          </div>
         </section>
-
+        <Map
+          city={offer.city}
+          offers={[offer, ...nearbyOffers]}
+          selectedOffer={null}
+        />
         <div className="container">
           <section className="near-places places">
             <h2 className="near-places__title">
               Other places in the neighbourhood
             </h2>
-            <OffersList
-              offers={nearbyOffers}
-              onOfferHover={setSelectedOffer}
-              className="near-places__list"
-            />
+            <div className="near-places__list places__list">
+              <OffersList
+                offers={nearbyOffers}
+                className="near-places__list"
+                onOfferHover={() => null}
+              />
+            </div>
           </section>
         </div>
       </main>

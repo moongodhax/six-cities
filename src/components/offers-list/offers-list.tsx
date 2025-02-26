@@ -3,14 +3,14 @@ import PlaceCard from '../place-card/place-card';
 
 type OffersListProps = {
   offers: Offer[];
-  onOfferHover?: (offer: Offer | null) => void;
   className?: string;
+  onOfferHover: (offer: Offer | null) => void;
 };
 
 function OffersList({
   offers,
-  onOfferHover,
-  className = 'cities__places-list places__list'
+  className = 'cities__places-list places__list',
+  onOfferHover
 }: OffersListProps): JSX.Element {
   return (
     <div className={`${className} tabs__content`}>
@@ -18,8 +18,8 @@ function OffersList({
         <PlaceCard
           key={offer.id}
           offer={offer}
-          onMouseEnter={() => onOfferHover?.(offer)}
-          onMouseLeave={() => onOfferHover?.(null)}
+          onMouseEnter={() => onOfferHover(offer)}
+          onMouseLeave={() => onOfferHover(null)}
         />
       ))}
     </div>

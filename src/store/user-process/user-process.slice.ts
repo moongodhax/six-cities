@@ -1,30 +1,41 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { City, Offer } from '../../mocks/offers';
-import { UserProcess } from '../../types/state';
+import { createSlice } from '@reduxjs/toolkit';
+import { AuthorizationStatus } from '../../const';
+import { UserData } from '../../types/auth';
+import { checkAuth, login, logout } from './user-process.action';
+
+type UserProcess = {
+  authorizationStatus: AuthorizationStatus;
+  userData: UserData | null;
+};
 
 const initialState: UserProcess = {
-  city: {
-    name: 'Paris',
-    location: {
-      latitude: 48.85661,
-      longitude: 2.351499,
-      zoom: 13
-    }
-  },
-  offers: []
+  authorizationStatus: AuthorizationStatus.Unknown,
+  userData: null
 };
 
 export const userProcess = createSlice({
   name: 'USER',
   initialState,
-  reducers: {
-    setCity: (state, action: PayloadAction<City>) => {
-      state.city = action.payload;
-    },
-    setOffers: (state, action: PayloadAction<Offer[]>) => {
-      state.offers = action.payload.map((offer: Offer): Offer => ({ ...offer }));
-    }
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(checkAuth.fulfilled, (state, action) => {
+        state.authorizationStatus = AuthorizationStatus.Auth;
+        state.userData = action.payload;
+      })
+      .addCase(checkAuth.rejected, (state) => {
+        state.authorizationStatus = AuthorizationStatus.NoAuth;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.authorizationStatus = AuthorizationStatus.Auth;
+        state.userData = action.payload;
+      })
+      .addCase(login.rejected, (state) => {
+        state.authorizationStatus = AuthorizationStatus.NoAuth;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.authorizationStatus = AuthorizationStatus.NoAuth;
+        state.userData = null;
+      });
   }
 });
-
-export const { setCity, setOffers } = userProcess.actions;

@@ -62,3 +62,15 @@ export enum SortType {
   PriceDesc = 'Price: high to low',
   TopRated = 'Top rated first',
 }
+
+export enum AuthorizationStatus {
+  Auth = 'AUTH',
+  NoAuth = 'NO_AUTH',
+  Unknown = 'UNKNOWN',
+}
+
+export const APIRoute = {
+  Offers: '/offers',
+  Login: '/login',
+  Logout: '/logout'
+} as const;

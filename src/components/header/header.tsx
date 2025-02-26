@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { AuthorizationStatus } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
+import { getFavorites } from '../../store/offers-data/offers-data.selectors';
 import { logout } from '../../store/user-process/user-process.action';
 import {
   getAuthorizationStatus,
@@ -10,6 +11,7 @@ import {
 function Header(): JSX.Element {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const userData = useAppSelector(getUserData);
+  const favorites = useAppSelector(getFavorites);
   const dispatch = useAppDispatch();
 
   const handleLogout = () => {
@@ -44,7 +46,9 @@ function Header(): JSX.Element {
                       <span className="header__user-name user__name">
                         {userData?.email}
                       </span>
-                      <span className="header__favorite-count">3</span>
+                      <span className="header__favorite-count">
+                        {favorites.length}
+                      </span>
                     </Link>
                     <Link
                       className="header__nav-link"

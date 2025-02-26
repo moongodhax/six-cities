@@ -8,7 +8,7 @@ type FavoriteCityProps = {
   offers: Offer[];
 };
 
-function FavoriteCity({ cityName, offers }: FavoriteCityProps): JSX.Element {
+function FavoriteCityComponent({ cityName, offers }: FavoriteCityProps): JSX.Element {
   return (
     <li className="favorites__locations-items">
       <div className="favorites__locations locations locations--current">
@@ -27,5 +27,6 @@ function FavoriteCity({ cityName, offers }: FavoriteCityProps): JSX.Element {
   );
 }
 
-const FavoriteCityComponent = memo(FavoriteCity);
-export default FavoriteCityComponent;
+const FavoriteCity = memo(FavoriteCityComponent);
+
+export default FavoriteCity;

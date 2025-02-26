@@ -53,6 +53,17 @@ export const fetchFavorites = createAsyncThunk<
   return data;
 });
 
+export const toggleFavorite = createAsyncThunk<
+  Offer,
+  { offerId: string; status: number },
+  { extra: AxiosInstance }
+>('data/toggleFavorite', async ({ offerId, status }, { extra: api }) => {
+  const { data } = await api.post<Offer>(
+    `${APIRoute.Favorite}/${offerId}/${status}`
+  );
+  return data;
+});
+
 type OffersData = {
   city: City;
   offers: Offer[];
@@ -90,7 +101,7 @@ export const fetchOffers = createAsyncThunk<
   undefined,
   { extra: AxiosInstance }
 >('data/fetchOffers', async (_arg, { extra: api }) => {
-  const { data } = await api.get<Offer[]>('/offers');
+  const { data } = await api.get<Offer[]>(APIRoute.Offers);
   return data;
 });
 
@@ -163,6 +174,41 @@ export const offersData = createSlice({
       })
       .addCase(fetchFavorites.rejected, (state) => {
         state.isFavoritesLoading = false;
+      })
+      .addCase(toggleFavorite.fulfilled, (state, action) => {
+        const updatedOffer = action.payload;
+
+        // Обновляем в списке offers
+        const offerIndex = state.offers.findIndex(
+          (offer) => offer.id === updatedOffer.id
+        );
+        if (offerIndex !== -1) {
+          state.offers[offerIndex] = updatedOffer;
+        }
+
+        // Обновляем текущее предложение если оно открыто
+        if (state.offer?.id === updatedOffer.id) {
+          state.offer = updatedOffer;
+        }
+
+        // Обновляем в списке nearby
+        const nearbyIndex = state.nearbyOffers.findIndex(
+          (offer) => offer.id === updatedOffer.id
+        );
+        if (nearbyIndex !== -1) {
+          state.nearbyOffers[nearbyIndex] = updatedOffer;
+        }
+
+        // Обновляем в избранном
+        if (updatedOffer.isFavorite) {
+          if (!state.favorites.some((offer) => offer.id === updatedOffer.id)) {
+            state.favorites.push(updatedOffer);
+          }
+        } else {
+          state.favorites = state.favorites.filter(
+            (offer) => offer.id !== updatedOffer.id
+          );
+        }
       });
   }
 });

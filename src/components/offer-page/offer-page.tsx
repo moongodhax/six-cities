@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { AuthorizationStatus } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
@@ -15,6 +15,7 @@ import {
   fetchReviews
 } from '../../store/offers-data/offers-data.slice';
 import { getAuthorizationStatus } from '../../store/user-process/user-process.selectors';
+import FavoriteButton from '../favorite-button/favorite-button';
 import Header from '../header/header';
 import Map from '../map/map';
 import OffersList from '../offers-list/offers-list';
@@ -45,7 +46,22 @@ function OfferPage(): JSX.Element {
   }
 
   if (hasError || !offer) {
-    return <div>Not found</div>;
+    return (
+      <div className="page">
+        <Header />
+        <main className="page__main page__main--offer">
+          <div className="container">
+            <section className="offer-error">
+              <h1>Not found</h1>
+              <p>Sorry, the offer you&apos;re looking for doesn&apos;t exist.</p>
+              <Link to="/" className="offer-error__link">
+                Return to main page
+              </Link>
+            </section>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   return (
@@ -75,17 +91,13 @@ function OfferPage(): JSX.Element {
               )}
               <div className="offer__name-wrapper">
                 <h1 className="offer__name">{offer.title}</h1>
-                <button
-                  className={`offer__bookmark-button ${
-                    offer.isFavorite ? 'offer__bookmark-button--active' : ''
-                  } button`}
-                  type="button"
-                >
-                  <svg className="offer__bookmark-icon" width="31" height="33">
-                    <use xlinkHref="#icon-bookmark"></use>
-                  </svg>
-                  <span className="visually-hidden">To bookmarks</span>
-                </button>
+                <FavoriteButton
+                  offerId={offer.id}
+                  isFavorite={offer.isFavorite}
+                  className="offer__bookmark-button"
+                  width={31}
+                  height={33}
+                />
               </div>
               <div className="offer__rating rating">
                 <div className="offer__stars rating__stars">

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../hooks';
 import { login } from '../../store/user-process/user-process.action';
 
-function LoginPage(): JSX.Element {
+const LoginPage = (): JSX.Element => {
   const loginRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
@@ -18,7 +18,9 @@ function LoginPage(): JSX.Element {
           login: loginRef.current.value,
           password: passwordRef.current.value
         })
-      ).then(() => navigate('/'));
+      ).then(() => {
+        navigate('/');
+      });
     }
   };
 
@@ -93,6 +95,6 @@ function LoginPage(): JSX.Element {
       </main>
     </div>
   );
-}
+};
 
 export default LoginPage;

@@ -2,7 +2,10 @@ import { ChangeEvent, FormEvent, Fragment, useState } from 'react';
 import { RATING_STARS } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { getIsReviewPosting } from '../../store/offers-data/offers-data.selectors';
-import { postReview } from '../../store/offers-data/offers-data.slice';
+import {
+  fetchReviews,
+  postReview
+} from '../../store/offers-data/offers-data.slice';
 
 type ReviewFormProps = {
   offerId: string;
@@ -19,15 +22,25 @@ function ReviewForm({ offerId }: ReviewFormProps): JSX.Element {
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
+    if (formData.rating === 0 || formData.comment.length < 50) {
+      return;
+    }
+
     void dispatch(
       postReview({
         offerId,
         comment: formData.comment,
         rating: formData.rating
       })
-    ).then(() => {
-      setFormData({ rating: 0, comment: '' });
-    });
+    )
+      .unwrap()
+      .then(() => {
+        setFormData({ rating: 0, comment: '' });
+        void dispatch(fetchReviews(offerId));
+      })
+      .catch(() => {
+        // Handle error silently
+      });
   };
 
   return (

@@ -74,7 +74,9 @@ export const APIRoute = {
   Login: '/login',
   Logout: '/logout',
   Comments: '/comments',
-  Nearby: '/nearby'
+  Nearby: '/nearby',
+  Favorite: '/favorite',
+  FavoriteStatus: '/favorite/:id/:status'
 } as const;
 
 export const RATING_STARS = [

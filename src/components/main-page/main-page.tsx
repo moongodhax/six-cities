@@ -10,6 +10,7 @@ import { fetchOffers } from '../../store/offers-data/offers-data.slice';
 import { Offer } from '../../types/offer';
 import CitiesList from '../cities-list/cities-list';
 import Header from '../header/header';
+import MainEmpty from '../main-empty/main-empty';
 import Map from '../map/map';
 import OffersList from '../offers-list/offers-list';
 import Sorting from '../sorting/sorting';
@@ -32,7 +33,25 @@ function MainPage(): JSX.Element {
   }
 
   if (hasError) {
-    return <div>Error loading offers</div>;
+    return (
+      <div className="page page--gray page--main">
+        <Header />
+        <main className="page__main page__main--index">
+          <div className="cities">
+            <div className="cities__places-container container">
+              <section className="cities__no-places">
+                <div className="cities__status-wrapper tabs__content">
+                  <b className="cities__status">Error loading offers</b>
+                  <p className="cities__status-description">
+                    Please try again later
+                  </p>
+                </div>
+              </section>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   return (
@@ -43,23 +62,31 @@ function MainPage(): JSX.Element {
         <div className="tabs">
           <CitiesList />
         </div>
-        <div className="cities">
-          <div className="cities__places-container container">
-            <section className="cities__places places">
-              <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">
-                {offers.length} places to stay in {city.name}
-              </b>
-              <Sorting />
-              <div className="cities__places-list places__list tabs__content">
-                <OffersList offers={offers} onOfferHover={setSelectedOffer} />
+        {offers.length > 0 ? (
+          <div className="cities">
+            <div className="cities__places-container container">
+              <section className="cities__places places">
+                <h2 className="visually-hidden">Places</h2>
+                <b className="places__found">
+                  {offers.length} places to stay in {city.name}
+                </b>
+                <Sorting />
+                <div className="cities__places-list places__list tabs__content">
+                  <OffersList offers={offers} onOfferHover={setSelectedOffer} />
+                </div>
+              </section>
+              <div className="cities__right-section">
+                <Map
+                  city={city}
+                  offers={offers}
+                  selectedOffer={selectedOffer}
+                />
               </div>
-            </section>
-            <div className="cities__right-section">
-              <Map city={city} offers={offers} selectedOffer={selectedOffer} />
             </div>
           </div>
-        </div>
+        ) : (
+          <MainEmpty />
+        )}
       </main>
     </div>
   );

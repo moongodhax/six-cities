@@ -1,41 +1,41 @@
 import { Link } from 'react-router-dom';
-import { Offer } from '../../mocks/offers';
+import { Offer } from '../../types/offer';
 import FavoriteButton from '../favorite-button/favorite-button';
 
-type PlaceCardProps = {
+type OfferCardProps = {
   offer: Offer;
-  onMouseEnter?: () => void;
-  onMouseLeave?: () => void;
+  onOfferHover?: (offer: Offer | null) => void;
+  className?: string;
 };
 
-function PlaceCard({
+function OfferCard({
   offer,
-  onMouseEnter,
-  onMouseLeave
-}: PlaceCardProps): JSX.Element {
+  onOfferHover,
+  className = 'cities'
+}: OfferCardProps): JSX.Element {
   const {
     id,
     title,
     type,
     price,
-    isPremium,
+    previewImage,
     isFavorite,
-    rating,
-    previewImage
+    isPremium,
+    rating
   } = offer;
 
   return (
     <article
-      className="cities__card place-card"
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
+      className={`${className}__card place-card`}
+      onMouseEnter={() => onOfferHover?.(offer)}
+      onMouseLeave={() => onOfferHover?.(null)}
     >
       {isPremium && (
         <div className="place-card__mark">
           <span>Premium</span>
         </div>
       )}
-      <div className="cities__image-wrapper place-card__image-wrapper">
+      <div className={`${className}__image-wrapper place-card__image-wrapper`}>
         <Link to={`/offer/${id}`}>
           <img
             className="place-card__image"
@@ -73,4 +73,4 @@ function PlaceCard({
   );
 }
 
-export default PlaceCard;
+export default OfferCard;

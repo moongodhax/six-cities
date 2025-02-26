@@ -14,7 +14,7 @@ export const getIsOfferLoading = (state: State) =>
   state.offersData.isOfferLoading;
 export const getNearbyOffers = (state: State) =>
   state.offersData.nearbyOffers.slice(0, 3);
-export const getReviews = (state: State) => state.offersData.reviews;
+export const getReviews = (state: State) => state.offersData.reviews || [];
 export const getIsReviewsLoading = (state: State) =>
   state.offersData.isReviewsLoading;
 export const getIsReviewPosting = (state: State) =>

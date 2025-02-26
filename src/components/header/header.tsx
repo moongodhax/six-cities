@@ -12,6 +12,10 @@ function Header(): JSX.Element {
   const userData = useAppSelector(getUserData);
   const dispatch = useAppDispatch();
 
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
   return (
     <header className="header">
       <div className="container">
@@ -45,10 +49,7 @@ function Header(): JSX.Element {
                     <Link
                       className="header__nav-link"
                       to="/"
-                      onClick={(evt) => {
-                        evt.preventDefault();
-                        dispatch(logout());
-                      }}
+                      onClick={handleLogout}
                     >
                       <span className="header__signout">Sign out</span>
                     </Link>

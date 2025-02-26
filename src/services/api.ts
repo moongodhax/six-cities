@@ -28,6 +28,11 @@ export const createAPI = (): AxiosInstance => {
         // Handle 404 error
       }
 
+      if (error.response?.status === StatusCodes.UNAUTHORIZED) {
+        // Просто пробрасываем ошибку дальше для обработки в slice
+        return Promise.reject(error);
+      }
+
       throw error;
     }
   );

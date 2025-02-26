@@ -19,6 +19,9 @@ export const getIsReviewsLoading = (state: State) =>
   state.offersData.isReviewsLoading;
 export const getIsReviewPosting = (state: State) =>
   state.offersData.isReviewPosting;
+export const getFavorites = (state: State) => state.offersData.favorites;
+export const getIsFavoritesLoading = (state: State) =>
+  state.offersData.isFavoritesLoading;
 
 const getSortedOffers = (offers: Offer[], sortType: SortType): Offer[] => {
   switch (sortType) {

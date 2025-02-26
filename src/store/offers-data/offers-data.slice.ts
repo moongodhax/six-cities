@@ -44,6 +44,15 @@ export const postReview = createAsyncThunk<
   return data;
 });
 
+export const fetchFavorites = createAsyncThunk<
+  Offer[],
+  undefined,
+  { extra: AxiosInstance }
+>('data/fetchFavorites', async (_arg, { extra: api }) => {
+  const { data } = await api.get<Offer[]>('/favorite');
+  return data;
+});
+
 type OffersData = {
   city: City;
   offers: Offer[];
@@ -56,6 +65,8 @@ type OffersData = {
   reviews: Review[];
   isReviewsLoading: boolean;
   isReviewPosting: boolean;
+  favorites: Offer[];
+  isFavoritesLoading: boolean;
 };
 
 const initialState: OffersData = {
@@ -69,7 +80,9 @@ const initialState: OffersData = {
   hasError: false,
   reviews: [],
   isReviewsLoading: false,
-  isReviewPosting: false
+  isReviewPosting: false,
+  favorites: [],
+  isFavoritesLoading: false
 };
 
 export const fetchOffers = createAsyncThunk<
@@ -140,6 +153,16 @@ export const offersData = createSlice({
       })
       .addCase(postReview.rejected, (state) => {
         state.isReviewPosting = false;
+      })
+      .addCase(fetchFavorites.pending, (state) => {
+        state.isFavoritesLoading = true;
+      })
+      .addCase(fetchFavorites.fulfilled, (state, action) => {
+        state.favorites = action.payload;
+        state.isFavoritesLoading = false;
+      })
+      .addCase(fetchFavorites.rejected, (state) => {
+        state.isFavoritesLoading = false;
       });
   }
 });

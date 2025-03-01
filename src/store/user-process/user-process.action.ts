@@ -7,8 +7,12 @@ import { ThunkOptions } from '../../types/state';
 export const checkAuth = createAsyncThunk<UserData, undefined, ThunkOptions>(
   'user/checkAuth',
   async (_arg, { extra: api }) => {
-    const { data } = await api.get<UserData>(APIRoute.Login);
-    return data;
+    try {
+      const response = await api?.get<UserData>(APIRoute.Login);
+      return response?.data || { id: 0, email: '', token: '' };
+    } catch (error) {
+      return { id: 0, email: '', token: '' };
+    }
   }
 );
 
@@ -17,7 +21,7 @@ export const login = createAsyncThunk<UserData, AuthData, ThunkOptions>(
   async ({ login: email, password }, { extra: api }) => {
     const { data } = await api.post<UserData>(APIRoute.Login, {
       email,
-      password
+      password,
     });
     saveToken(data.token);
     return data;

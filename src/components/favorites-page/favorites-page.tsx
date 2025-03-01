@@ -19,18 +19,16 @@ function FavoritesPage(): JSX.Element {
     dispatch(fetchFavorites());
   }, [dispatch]);
 
-  const groupedFavorites = useMemo(() => {
-    return Object.entries(
-      favorites.reduce<{ [key: string]: typeof favorites }>((acc, offer) => {
-        const cityName = offer.city.name;
-        if (!acc[cityName]) {
-          acc[cityName] = [];
-        }
-        acc[cityName].push(offer);
-        return acc;
-      }, {})
-    );
-  }, [favorites]);
+  const groupedFavorites = useMemo(() => Object.entries(
+    favorites.reduce<{ [key: string]: typeof favorites }>((acc, offer) => {
+      const cityName = offer.city.name;
+      if (!acc[cityName]) {
+        acc[cityName] = [];
+      }
+      acc[cityName].push(offer);
+      return acc;
+    }, {})
+  ), [favorites]);
 
   if (isLoading) {
     return <Spinner />;

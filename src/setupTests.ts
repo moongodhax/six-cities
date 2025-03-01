@@ -1,4 +1,4 @@
-import matchers from '@testing-library/jest-dom/matchers';
-import { expect } from 'vitest';
+import '@testing-library/jest-dom';
 
-expect.extend(matchers);
+// No need to extend matchers manually, as @testing-library/jest-dom
+// should register itself automatically
